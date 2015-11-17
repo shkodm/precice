@@ -298,10 +298,14 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   int logCLoop = 2;
   PetscLogEventRegister("Filling Matrix C", 0, &logCLoop);
   PetscLogEventBegin(logCLoop, 0, 0, 0, 0);
+  int firstID = -1;
   // We collect entries for each row and set them blockwise using MatSetValues.
   for (const mesh::Vertex& inVertex : inMesh->vertices()) {
-    // if (not inVertex.isOwner())
-      // continue;
+    if (not inVertex.isOwner())
+      continue;
+
+    if (firstID == -1)
+      firstID = inVertex.getID();
 
     int row = inVertex.getGlobalIndex() + polyparams;
 
@@ -324,7 +328,8 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
     // -- SETS THE COEFFICIENTS --
     PetscInt colNum = 0;  // holds the number of columns
     preciceDebug("ID = " << inVertex.getID() << " inputSize = " << inputSize);
-    for (size_t j=inVertex.getID(); j < inputSize; j++) {
+    preciceDebug("inMesh getID = " << inVertex.getID());
+    for (size_t j=inVertex.getID(); j < inputSize + firstID; j++) {
       distance = inVertex.getCoords() - inMesh->vertices()[j].getCoords();
       
       for (int d = 0; d < dimensions; d++) {
