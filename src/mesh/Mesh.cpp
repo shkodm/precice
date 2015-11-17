@@ -635,26 +635,71 @@ void Mesh:: computeDistribution()
   }
   else if (utils::MasterSlave::_masterMode) {
     //global number of vertices
+//    std::vector<int> globalOwnerVec(_globalNumberOfVertices,0);
+//    for (int rank = 0; rank < utils::MasterSlave::_size; rank++){
+//      auto globalIndices = _vertexDistribution[rank];
+//      int localNumberOfVertices = _vertexDistribution[rank].size();
+//      std::vector<int> ownerVec(localNumberOfVertices,0);
+//      for(int i=0;i<localNumberOfVertices;i++){
+//        if(globalOwnerVec[globalIndices[i]] == 0){
+//          ownerVec[i] = 1;
+//          globalOwnerVec[globalIndices[i]] = 1;
+//        }
+//      }
+//      if (localNumberOfVertices!=0) {
+//        if(rank==0){ //master own data
+//          setOwnerInformation(ownerVec);
+//        }
+//        else{
+//          utils::MasterSlave::_communication->send(ownerVec.data(),localNumberOfVertices,rank);
+//        }
+//      }
+//    }
+
+    // ### NEW VARIANT ###
+    //global number of vertices
     std::vector<int> globalOwnerVec(_globalNumberOfVertices,0);
+    std::vector<std::vector<int> > slaveOwnerVecs;
+    slaveOwnerVecs.resize(utils::MasterSlave::_size);
+    int localGuess = _globalNumberOfVertices / utils::MasterSlave::_size;
+
     for (int rank = 0; rank < utils::MasterSlave::_size; rank++){
       auto globalIndices = _vertexDistribution[rank];
       int localNumberOfVertices = _vertexDistribution[rank].size();
-      std::vector<int> ownerVec(localNumberOfVertices,0);
+      slaveOwnerVecs[rank].resize(localNumberOfVertices);
+      int counter = 0;
       for(int i=0;i<localNumberOfVertices;i++){
         if(globalOwnerVec[globalIndices[i]] == 0){
-          ownerVec[i] = 1;
-          globalOwnerVec[globalIndices[i]] = 1;
-        }
-      }
-      if (localNumberOfVertices!=0) {
-        if(rank==0){ //master own data
-          setOwnerInformation(ownerVec);
-        }
-        else{
-          utils::MasterSlave::_communication->send(ownerVec.data(),localNumberOfVertices,rank);
+          slaveOwnerVecs[rank][i] = 1;
+          globalOwnerVec[globalIndices[i]] = rank + 1;
+          ++counter;
+          if(counter==localGuess) break;
         }
       }
     }
+    for (int rank = 0; rank < utils::MasterSlave::_size; rank++){
+      auto globalIndices = _vertexDistribution[rank];
+      int localNumberOfVertices = _vertexDistribution[rank].size();
+      for(int i=0;i<localNumberOfVertices;i++){
+        if(globalOwnerVec[globalIndices[i]] == 0){
+          slaveOwnerVecs[rank][i] = 1;
+          globalOwnerVec[globalIndices[i]] = rank + 1;
+        }
+      }
+
+      if (localNumberOfVertices!=0) {
+        if(rank==0){ //master own data
+          setOwnerInformation(slaveOwnerVecs[rank]);
+        }
+        else{
+          utils::MasterSlave::_communication->send(slaveOwnerVecs[rank].data(),localNumberOfVertices,rank);
+        }
+      }
+    }
+    std::cout << "GlobalOwner: " << globalOwnerVec << std::endl;
+
+
+
 #   ifdef Debug
       for(int i=0;i<_globalNumberOfVertices;i++){
         if(globalOwnerVec[i]==0){
