@@ -189,6 +189,8 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   }
   size_t polyparams = 1 + dimensions - deadDimensions;
 
+  preciceDebug("polyParams = " << polyparams << " = 1 + " << dimensions << " - " << deadDimensions);
+  
   // Indizes that are used to build the Petsc Index set
   std::vector<int> myIndizes;
 
@@ -202,6 +204,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
     if (v.isOwner())
       myIndizes.push_back(v.getGlobalIndex() + polyparams);
 
+  preciceDebug("My Indizes = " << myIndizes);
   auto inputSize = myIndizes.size();
   auto n = inputSize; // polyparams, if on rank 0, are included here
 
@@ -243,12 +246,12 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   ierr = MatSetLocalToGlobalMapping(_matrixC.matrix, _ISmapping, _ISmapping); CHKERRV(ierr); // Set mapping for rows and cols
   ierr = MatSetLocalToGlobalMapping(_matrixA.matrix, ISidentityMapping, _ISmapping); CHKERRV(ierr); // Set mapping only for cols, use identity for rows
 
-  // if (utils::MasterSlave::_rank <= 0) {
-  //   cout << "== ISidentityGlobal ==" << endl;
-  //   ISView(ISidentityGlobal, PETSC_VIEWER_STDOUT_SELF);
-  //   cout << "== ISglobal ==" << endl;
-  //   ISView(ISglobal, PETSC_VIEWER_STDOUT_SELF);
-  // }
+  if (utils::MasterSlave::_rank <= 0) {
+    cout << "== ISidentityGlobal ==" << endl;
+    ISView(ISidentityGlobal, PETSC_VIEWER_STDOUT_SELF);
+    cout << "== ISglobal ==" << endl;
+    ISView(ISglobal, PETSC_VIEWER_STDOUT_SELF);
+  }
 
   int i = 0;
   utils::DynVector distance(dimensions);
@@ -297,8 +300,8 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   PetscLogEventBegin(logCLoop, 0, 0, 0, 0);
   // We collect entries for each row and set them blockwise using MatSetValues.
   for (const mesh::Vertex& inVertex : inMesh->vertices()) {
-    if (not inVertex.isOwner())
-      continue;
+    // if (not inVertex.isOwner())
+      // continue;
 
     int row = inVertex.getGlobalIndex() + polyparams;
 
@@ -320,6 +323,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
 
     // -- SETS THE COEFFICIENTS --
     PetscInt colNum = 0;  // holds the number of columns
+    preciceDebug("ID = " << inVertex.getID() << " inputSize = " << inputSize);
     for (size_t j=inVertex.getID(); j < inputSize; j++) {
       distance = inVertex.getCoords() - inMesh->vertices()[j].getCoords();
       
@@ -329,6 +333,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
         }
       }
       double coeff = _basisFunction.evaluate(norm2(distance));
+      preciceDebug("Setting " << row << ", " <<  inMesh->vertices()[j].getGlobalIndex() + polyparams << " = " << coeff);
       if (not tarch::la::equals(coeff, 0.0)) {
         colVals[colNum] = coeff;
         colIdx[colNum] = inMesh->vertices()[j].getGlobalIndex() + polyparams; // column of entry is the globalIndex
@@ -460,7 +465,8 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   // }
 
   _hasComputedMapping = true;
-  // _matrixA.view();
+  _matrixC.view();
+  _matrixA.view();
 }
 
 template<typename RADIAL_BASIS_FUNCTION_T>
