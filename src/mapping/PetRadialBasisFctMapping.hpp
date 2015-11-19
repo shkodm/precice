@@ -329,8 +329,9 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
     PetscInt colNum = 0;  // holds the number of columns
     preciceDebug("ID = " << inVertex.getID() << " inputSize = " << inputSize);
     preciceDebug("inMesh getID = " << inVertex.getID());
-    for (size_t j=inVertex.getID(); j < inputSize + firstID; j++) {
-      distance = inVertex.getCoords() - inMesh->vertices()[j].getCoords();
+    //for (size_t j=inVertex.getID(); j < inputSize + firstID; j++) {
+    for (mesh::Vertex& vj : inMesh->vertices()) {
+      distance = inVertex.getCoords() - vj.getCoords();
       
       for (int d = 0; d < dimensions; d++) {
         if (_deadAxis[d]) {
@@ -338,18 +339,18 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
         }
       }
       double coeff = _basisFunction.evaluate(norm2(distance));
-      preciceDebug("Setting " << row << ", " <<  inMesh->vertices()[j].getGlobalIndex() + polyparams << " = " << coeff);
+      preciceDebug("Setting " << row << ", " <<  vj.getGlobalIndex() + polyparams << " = " << coeff);
       if (not tarch::la::equals(coeff, 0.0)) {
         colVals[colNum] = coeff;
-        colIdx[colNum] = inMesh->vertices()[j].getGlobalIndex() + polyparams; // column of entry is the globalIndex
+        colIdx[colNum] = vj.getGlobalIndex() + polyparams; // column of entry is the globalIndex
         colNum++;
       }
       #ifdef Asserts
       if (coeff == std::numeric_limits<double>::infinity()) {
         preciceError("computeMapping()", "C matrix element has value inf. "
-                     << "i = " << i << ", j = " << j
+                     << "i = " << i
                      << ", coords i = " << inVertex.getCoords() << ", coords j = "
-                     << inMesh->vertices()[j].getCoords() << ", dist = "
+                     << vj.getCoords() << ", dist = "
                      << distance << ", norm2 = " << norm2(distance) << ", rbf = "
                      << coeff
                      << ", rbf type = " << typeid(_basisFunction).name());
