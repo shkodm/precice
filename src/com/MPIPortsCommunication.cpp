@@ -120,12 +120,12 @@ void MPIPortsCommunication::acceptConnectionAsServer(
   DEBUG("Accept connection at " << _portName);
 
   _communicators.resize(requesterCommunicatorSize, MPI_COMM_NULL);
+  MPI_Comm communicator;
 
   for (int requesterProcessRank = 0;
        requesterProcessRank < requesterCommunicatorSize;
        ++requesterProcessRank) {
     
-    MPI_Comm communicator;
     MPI_Comm_accept(const_cast<char *>(_portName.c_str()), MPI_INFO_NULL, 0, MPI_COMM_SELF, &communicator);
 
     DEBUG("Accepted connection at " << _portName);
