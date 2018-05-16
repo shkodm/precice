@@ -380,23 +380,6 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
   e.start(true);
 #endif
 
-#ifdef SuperMUC_WORK
-  try {
-    auto addressDirectory = _communicationFactory->addressDirectory();
-
-    if (utils::MasterSlave::_masterMode) {
-      Event e(_prefix + "PointToPointCommunication::acceptConnection/createDirectories");
-
-      for (int rank = 0; rank < utils::MasterSlave::_size; ++rank) {
-        Publisher::createDirectory(addressDirectory + "/" + "." + nameAcceptor + "-" + _mesh->getName() +
-                                   "-" + std::to_string(rank) + ".address");
-      }
-    }
-    utils::Parallel::synchronizeProcesses();
-  } catch (...) {
-  }
-#endif
-
   if (communicationMap.empty()) {
     assertion(_localIndexCount == 0);
     _isConnected = true;
@@ -407,11 +390,6 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
   // process (in the current participant) with rank `utils::MasterSlave::_rank'
   // and (multiple) requester processes (in the requester participant).
   auto c = _communicationFactory->newCommunication();
-
-#ifdef SuperMUC_WORK
-  Publisher::ScopedPushDirectory spd("." + nameAcceptor + "-" + _mesh->getName() + "-" +
-                                     std::to_string(utils::MasterSlave::_rank) + ".address");
-#endif
 
   c->acceptConnectionAsServer(
       nameAcceptor + "-" + std::to_string(utils::MasterSlave::_rank),
@@ -520,15 +498,6 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
   e.start(true);
 #endif
 
-#ifdef SuperMUC_WORK
-  try {
-    auto addressDirectory = _communicationFactory->addressDirectory();
-
-    utils::Parallel::synchronizeProcesses();
-  } catch (...) {
-  }
-#endif
-
   if (communicationMap.empty()) {
     assertion(_localIndexCount == 0);
     _isConnected = true;
@@ -553,11 +522,6 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
     _totalIndexCount += indices.size();
 
     auto c = _communicationFactory->newCommunication();
-
-#ifdef SuperMUC_WORK
-    Publisher::ScopedPushDirectory spd("." + nameAcceptor + "-" + _mesh->getName() + "-" +
-                                       std::to_string(globalAcceptorRank) + ".address");
-#endif
 
     c->requestConnectionAsClient(nameAcceptor + "-" + std::to_string(globalAcceptorRank), nameRequester);
     // assertion(c->getRemoteCommunicatorSize() == 1);
