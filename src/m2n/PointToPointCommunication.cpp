@@ -380,12 +380,6 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
   e.start(true);
 #endif
 
-  if (communicationMap.empty()) {
-    assertion(_localIndexCount == 0);
-    _isConnected = true;
-    return;
-  }
-
   // Accept point-to-point connections (as server) between the current acceptor
   // process (in the current participant) with rank `utils::MasterSlave::_rank'
   // and (multiple) requester processes (in the requester participant).
@@ -497,12 +491,6 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
   printLocalIndexCountStats(communicationMap);
   e.start(true);
 #endif
-
-  if (communicationMap.empty()) {
-    assertion(_localIndexCount == 0);
-    _isConnected = true;
-    return;
-  }
 
   Publisher::ScopedSetEventNamePrefix ssenp(
       _prefix + "PointToPointCommunication::requestConnection/request/");
