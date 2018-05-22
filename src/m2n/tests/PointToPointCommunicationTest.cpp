@@ -135,6 +135,7 @@ void P2PComTest1(com::PtrCommunicationFactory cf)
     break;
   }
   }
+  utils::MasterSlave::_rank = utils::Parallel::getProcessRank();
 
   if (Parallel::getProcessRank() < 2) {
     c.requestConnection("B", "A");

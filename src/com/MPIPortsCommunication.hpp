@@ -49,8 +49,9 @@ public:
   /// See precice::com::Communication::closeConnection().
   virtual void closeConnection();
 
-private:
   virtual MPI_Comm &communicator(int rank);
+
+private:
 
   virtual int rank(int rank);
 

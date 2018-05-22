@@ -1,6 +1,7 @@
 #include "PointToPointCommunication.hpp"
 #include <vector>
 #include "com/Communication.hpp"
+#include "com/MPIPortsCommunication.hpp"
 #include "com/CommunicationFactory.hpp"
 #include "mesh/Mesh.hpp"
 #include "utils/EventTimings.hpp"
@@ -385,8 +386,9 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
   // and (multiple) requester processes (in the requester participant).
   auto c = _communicationFactory->newCommunication();
 
+  WARN("BEFORE ACCEPT CONNECTION");
   c->acceptConnectionAsServer(
-      nameAcceptor + "-" + std::to_string(utils::MasterSlave::_rank),
+      nameAcceptor,
       nameRequester,
       communicationMap.size());
 
@@ -397,8 +399,14 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
   for (size_t localRequesterRank = 0; localRequesterRank < communicationMap.size(); ++localRequesterRank) {
     int globalRequesterRank = -1;
 
-    c->receive(globalRequesterRank, localRequesterRank);
-
+    // c->receive(globalRequesterRank, localRequesterRank);
+    // We don't know which ranks connect to us, so we accept connections from any source and save their
+    // remote ranks.
+    // It doesn't matter which communicator to use, they are all the same after acceptConnectionAsServer
+    WARN("Before receive rank, comMap.size = " << communicationMap.size());
+    MPI_Recv(&globalRequesterRank, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG,
+             dynamic_cast<com::MPIPortsCommunication&>(*c).communicator(0), MPI_STATUS_IGNORE);
+    WARN("Received rank = " << globalRequesterRank);
     auto indices = std::move(communicationMap[globalRequesterRank]);
     _totalIndexCount += indices.size();
 
@@ -412,7 +420,7 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
     // of `_mappings' with the requester participant side, we simply
     // duplicate references to the same communication object `c'.
     _mappings.push_back({
-        static_cast<int>(localRequesterRank), globalRequesterRank, std::move(indices), c, com::PtrRequest(), 0});
+        globalRequesterRank, globalRequesterRank, std::move(indices), c, com::PtrRequest(), 0});
   }
 
   _buffer.reserve(_totalIndexCount * _mesh->getDimensions());
@@ -499,22 +507,20 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
   requests.reserve(communicationMap.size());
   _mappings.reserve(communicationMap.size());
 
-  // Request point-to-point connections (as client) between the current
-  // requester process (in the current participant) and (multiple) acceptor
-  // processes (in the acceptor participant) with ranks `globalAcceptorRank'
-  // according to communication map.
+  auto c = _communicationFactory->newCommunication();
+  WARN("BEFORE REQUEST CONNECTION");
+  c->requestConnectionAsClient(nameAcceptor, nameRequester);
+  
   for (auto &i : communicationMap) {
     auto globalAcceptorRank = i.first;
     auto indices            = std::move(i.second);
 
     _totalIndexCount += indices.size();
 
-    auto c = _communicationFactory->newCommunication();
-
-    c->requestConnectionAsClient(nameAcceptor + "-" + std::to_string(globalAcceptorRank), nameRequester);
     // assertion(c->getRemoteCommunicatorSize() == 1);
-
-    auto request = c->aSend(&utils::MasterSlave::_rank, 0);
+    WARN("Before send rank to " << globalAcceptorRank);
+    auto request = c->aSend(&utils::MasterSlave::_rank, globalAcceptorRank); // ends up as globalRequesterRank in accept
+    WARN("After send rank");
 
     requests.push_back(request);
 
@@ -524,7 +530,7 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
     // as clients, i.e. each of them requests only one connection to
     // acceptor process (in the acceptor participant).
     _mappings.push_back({
-        0, globalAcceptorRank, std::move(indices), c, com::PtrRequest(), 0});
+        globalAcceptorRank, globalAcceptorRank, std::move(indices), c, com::PtrRequest(), 0});
   }
 
   com::Request::wait(requests);
@@ -555,7 +561,7 @@ void PointToPointCommunication::send(double *itemsToSend,
                                      int     valueDimension)
 {
 
-  if (_mappings.size() == 0) {
+  if (_mappings.empty()) {
     assertion(_localIndexCount == 0);
     return;
   }
@@ -586,7 +592,7 @@ void PointToPointCommunication::receive(double *itemsToReceive,
                                         size_t  size,
                                         int     valueDimension)
 {
-  if (_mappings.size() == 0) {
+  if (_mappings.empty()) {
     assertion(_localIndexCount == 0);
     return;
   }

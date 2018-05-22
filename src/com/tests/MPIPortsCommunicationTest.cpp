@@ -2,6 +2,7 @@
 
 #include "com/MPIPortsCommunication.hpp"
 #include "testing/Testing.hpp"
+#include "testing/Fixtures.hpp"
 #include "utils/Parallel.hpp"
 
 using namespace precice;
@@ -79,71 +80,55 @@ BOOST_AUTO_TEST_CASE(SendReceiveTwoProcessesServerClient,
   }
 }
 
-BOOST_AUTO_TEST_CASE(SendReceiveFourProcessesServerClient,
-                     * testing::MinRanks(4)
-                     * boost::unit_test::fixture<testing::SyncProcessesFixture>())
+BOOST_FIXTURE_TEST_CASE(SendReceiveFourProcessesServerClient, testing::SplitParticipantsFixture,
+                        * testing::MinRanks(4))
        
 {
+  utils::MasterSlave::_rank = utils::Parallel::getProcessRank();
+  
   MPIPortsCommunication communication;
 
   std::string nameEven("even");
   std::string nameOdd("odd");
-
-  switch (utils::Parallel::getProcessRank()) {
-  case 0: {
+  
+  switch (participantID) {
+  case 1: {
+    std::cout << "M2N Rank2 = " << utils::MasterSlave::_rank << std::endl;
     communication.acceptConnectionAsServer(nameEven, nameOdd, 2);
 
-    int requestorLocalRank = 0;
-    int requestorGlobalRank = -1;
-    communication.receive(requestorGlobalRank, requestorLocalRank);
-    BOOST_TEST(requestorGlobalRank >= 2);
-    BOOST_TEST(requestorGlobalRank <= 3);
-    int message = requestorGlobalRank * 10;
-    communication.send(message, requestorLocalRank);
-    communication.receive(message, requestorLocalRank);
-    BOOST_TEST(message == requestorGlobalRank * 10 + 2);
+    // int requestorLocalRank = 0;
+    // int requestorGlobalRank = -1;
+    // communication.receive(requestorGlobalRank, requestorLocalRank);
+    // BOOST_TEST(requestorGlobalRank >= 2);
+    // BOOST_TEST(requestorGlobalRank <= 3);
+    // int message = requestorGlobalRank * 10;
+    // communication.send(message, requestorLocalRank);
+    // communication.receive(message, requestorLocalRank);
+    // BOOST_TEST(message == requestorGlobalRank * 10 + 2);
 
-    requestorLocalRank = 1;
-    requestorGlobalRank = -1;
-    communication.receive(requestorGlobalRank, requestorLocalRank);
-    BOOST_TEST(requestorGlobalRank >= 2);
-    BOOST_TEST(requestorGlobalRank <= 3);
-    message = requestorGlobalRank * 10;
-    communication.send(message, requestorLocalRank);
-    communication.receive(message, requestorLocalRank);
-    BOOST_TEST(message == requestorGlobalRank * 10 + 2);
+    // requestorLocalRank = 1;
+    // requestorGlobalRank = -1;
+    // communication.receive(requestorGlobalRank, requestorLocalRank);
+    // BOOST_TEST(requestorGlobalRank >= 2);
+    // BOOST_TEST(requestorGlobalRank <= 3);
+    // message = requestorGlobalRank * 10;
+    // communication.send(message, requestorLocalRank);
+    // communication.receive(message, requestorLocalRank);
+    // BOOST_TEST(message == requestorGlobalRank * 10 + 2);
 
     communication.closeConnection();
-    break;
-  }
-  case 1: {
-    // does not accept a connection
     break;
   }
   case 2: {
     communication.requestConnectionAsClient(nameEven, nameOdd);
-    int globalRank = 2;
-    communication.send(globalRank,0);
+    // int globalRank = 2;
+    // communication.send(globalRank,0);
 
-    int message = -1;
-    communication.receive(message, 0);
-    BOOST_TEST(message == 20);
-    message += 2;
-    communication.send(message, 0);
-
-    communication.closeConnection();
-    break;
-  }
-  case 3: {
-    communication.requestConnectionAsClient(nameEven, nameOdd);
-    int globalRank = 3;
-    communication.send(globalRank,0);
-
-    int message = -1;
-    communication.receive(message, 0);
-    BOOST_TEST(message == 30);
-    message += 2;
-    communication.send(message, 0);
+    // int message = -1;
+    // communication.receive(message, 0);
+    // BOOST_TEST(message == 20);
+    // message += 2;
+    // communication.send(message, 0);
 
     communication.closeConnection();
     break;
