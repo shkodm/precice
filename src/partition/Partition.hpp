@@ -39,7 +39,7 @@ public:
   virtual void communicate () = 0;
 
   ///The partition is computed, i.e. the mesh re-partitioned if required and all data structures are set up.
-  virtual void compute () = 0;
+  virtual void compute() =0;
 
   void setFromMapping(mapping::PtrMapping fromMapping){
     _fromMapping = fromMapping;
@@ -64,7 +64,7 @@ protected:
   m2n::PtrM2N _m2n;
 
   /// Decides which rank owns which vertex, information stored at each rank.
-  virtual void createOwnerInformation() = 0;
+  virtual void createOwnerInformation()=0;
 
   /// Generate vertex offsets from the vertexDistribution, broadcast it to all slaves
   void computeVertexOffsets();

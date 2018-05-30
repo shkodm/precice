@@ -33,7 +33,7 @@ public:
   };
 
    /// Constructor
-   ReceivedPartition (mesh::PtrMesh mesh, GeometricFilter geometricFilter, double safetyFactor);
+  ReceivedPartition (mesh::PtrMesh mesh, GeometricFilter geometricFilter, double safetyFactor);
 
    virtual ~ReceivedPartition() {}
 
