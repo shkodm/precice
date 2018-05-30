@@ -3,14 +3,12 @@
 #include "com/MPIPortsCommunication.hpp"
 #include "com/SocketCommunication.hpp"
 #include "xml/XMLAttribute.hpp"
+#include "utils/Helpers.hpp"
 
 namespace precice
 {
 namespace com
 {
-
-logging::Logger CommunicationConfiguration::_log("com::CommunicationConfiguration");
-
 PtrCommunication CommunicationConfiguration::createCommunication(
     const xml::XMLTag &tag) const
 {

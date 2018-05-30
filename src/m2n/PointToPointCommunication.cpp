@@ -15,26 +15,7 @@ namespace precice
 namespace m2n
 {
 
-void send(std::vector<int> const &v,
-          int                     rankReceiver,
-          com::PtrCommunication   communication)
-{
-  communication->send(static_cast<int>(v.size()), rankReceiver);
-  communication->send(const_cast<int *>(&v[0]), v.size(), rankReceiver);
-}
-
-void receive(std::vector<int> &    v,
-             int                   rankSender,
-             com::PtrCommunication communication)
-{
-  v.clear();
-  int size = 0;
-  communication->receive(size, rankSender);
-  v.resize(size);
-  communication->receive(&v[0], size, rankSender);
-}
-
-void send(std::map<int, std::vector<int>> const &m,
+void send(mesh::Mesh::VertexDistribution const &m,
           int                                    rankReceiver,
           com::PtrCommunication                  communication)
 {
@@ -44,11 +25,11 @@ void send(std::map<int, std::vector<int>> const &m,
     auto const &rank    = i.first;
     auto const &indices = i.second;
     communication->send(rank, rankReceiver);
-    send(indices, rankReceiver, communication);
+    communication->send(indices, rankReceiver);
   }
 }
 
-void receive(std::map<int, std::vector<int>> &m,
+void receive(mesh::Mesh::VertexDistribution &m,
              int                              rankSender,
              com::PtrCommunication            communication)
 {
@@ -59,29 +40,11 @@ void receive(std::map<int, std::vector<int>> &m,
   while (size--) {
     int rank = -1;
     communication->receive(rank, rankSender);
-    receive(m[rank], rankSender, communication);
+    communication->receive(m[rank], rankSender);
   }
 }
 
-void broadcast(std::vector<int> const &v,
-               com::PtrCommunication   communication = utils::MasterSlave::_communication)
-{
-  communication->broadcast(static_cast<int>(v.size()));
-  communication->broadcast(const_cast<int *>(&v[0]), v.size());
-}
-
-void broadcast(std::vector<int> &    v,
-               int                   rankBroadcaster,
-               com::PtrCommunication communication = utils::MasterSlave::_communication)
-{
-  v.clear();
-  int size = 0;
-  communication->broadcast(size, rankBroadcaster);
-  v.resize(size);
-  communication->broadcast(&v[0], size, rankBroadcaster);
-}
-
-void broadcastSend(std::map<int, std::vector<int>> const &m,
+void broadcastSend(mesh::Mesh::VertexDistribution const &m,
                    com::PtrCommunication                  communication = utils::MasterSlave::_communication)
 {
   communication->broadcast(static_cast<int>(m.size()));
@@ -90,11 +53,11 @@ void broadcastSend(std::map<int, std::vector<int>> const &m,
     auto const &rank    = i.first;
     auto const &indices = i.second;
     communication->broadcast(rank);
-    broadcast(indices, communication);
+    communication->broadcast(indices);
   }
 }
 
-void broadcastReceive(std::map<int, std::vector<int>> &m,
+void broadcastReceive(mesh::Mesh::VertexDistribution &m,
                       int                              rankBroadcaster,
                       com::PtrCommunication            communication = utils::MasterSlave::_communication)
 {
@@ -105,11 +68,11 @@ void broadcastReceive(std::map<int, std::vector<int>> &m,
   while (size--) {
     int rank = -1;
     communication->broadcast(rank, rankBroadcaster);
-    broadcast(m[rank], rankBroadcaster, communication);
+    communication->broadcast(m[rank], rankBroadcaster);
   }
 }
 
-void broadcast(std::map<int, std::vector<int>> &m)
+void broadcast(mesh::Mesh::VertexDistribution &m)
 {
   if (utils::MasterSlave::_masterMode) {
     // Broadcast (send) vertex distributions.
@@ -260,9 +223,9 @@ std::map<int, std::vector<int>> buildCommunicationMap(
     // `localIndexCount' is the number of unique local indices for the current rank.
     size_t &localIndexCount,
     // `thisVertexDistribution' is input vertex distribution from this participant.
-    std::map<int, std::vector<int>> const &thisVertexDistribution,
+    mesh::Mesh::VertexDistribution const &thisVertexDistribution,
     // `otherVertexDistribution' is input vertex distribution from other participant.
-    std::map<int, std::vector<int>> const &otherVertexDistribution,
+    mesh::Mesh::VertexDistribution const &otherVertexDistribution,
     int                                    thisRank = utils::MasterSlave::_rank)
 {
 
@@ -357,14 +320,14 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
         "You can only use a point-to-point communication between two participants which both use a master. "
             << "Please use distribution-type gather-scatter instead.");
 
-  std::map<int, std::vector<int>> &vertexDistribution = _mesh->getVertexDistribution();
-  std::map<int, std::vector<int>>  requesterVertexDistribution;
+  mesh::Mesh::VertexDistribution &vertexDistribution = _mesh->getVertexDistribution();
+  mesh::Mesh::VertexDistribution  requesterVertexDistribution;
 
   if (utils::MasterSlave::_masterMode) {
     // Establish connection between participants' master processes.
     auto c = _communicationFactory->newCommunication();
 
-    c->acceptConnection(nameAcceptor, nameRequester, 0, 1);
+    c->acceptConnection(nameAcceptor, nameRequester);
 
     int requesterMasterRank;
 
@@ -469,19 +432,15 @@ void PointToPointCommunication::acceptConnection(std::string const &nameAcceptor
 
     // NOTE:
     // Everything is moved (efficiency)!
-    _mappings.push_back(
-        {static_cast<int>(localRequesterRank),
-         globalRequesterRank,
-         std::move(indices),
-         // NOTE:
-         // On the acceptor participant side, the communication object `c'
-         // behaves as a server, i.e. it implicitly accepts multiple connections
-         // to requester processes (in the requester participant). As a result,
-         // only one communication object `c' is needed to satisfy
-         // `communicationMap', and, therefore, for data structure consistency
-         // of `_mappings' with the requester participant side, we simply
-         // duplicate references to the same communication object `c'.
-         c});
+    // On the acceptor participant side, the communication object `c'
+    // behaves as a server, i.e. it implicitly accepts multiple connections
+    // to requester processes (in the requester participant). As a result,
+    // only one communication object `c' is needed to satisfy
+    // `communicationMap', and, therefore, for data structure consistency
+    // of `_mappings' with the requester participant side, we simply
+    // duplicate references to the same communication object `c'.
+    _mappings.push_back({
+        static_cast<int>(localRequesterRank), globalRequesterRank, std::move(indices), c, com::PtrRequest(), 0});
   }
 
   _buffer.reserve(_totalIndexCount * _mesh->getDimensions());
@@ -497,8 +456,8 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
         "You can only use a point-to-point communication between two participants which both use a master. "
             << "Please use distribution-type gather-scatter instead.");
 
-  std::map<int, std::vector<int>> &vertexDistribution = _mesh->getVertexDistribution();
-  std::map<int, std::vector<int>>  acceptorVertexDistribution;
+  mesh::Mesh::VertexDistribution &vertexDistribution = _mesh->getVertexDistribution();
+  mesh::Mesh::VertexDistribution  acceptorVertexDistribution;
 
   if (utils::MasterSlave::_masterMode) {
     // Establish connection between participants' master processes.
@@ -576,8 +535,7 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
     return;
   }
 
-  Publisher::ScopedSetEventNamePrefix ssenp(
-      _prefix + "PointToPointCommunication::requestConnection/request/");
+  Publisher::ScopedSetEventNamePrefix ssenp(_prefix + "PointToPointCommunication::requestConnection/request/");
 
   std::vector<com::PtrRequest> requests;
   requests.reserve(communicationMap.size());
@@ -603,21 +561,17 @@ void PointToPointCommunication::requestConnection(std::string const &nameAccepto
     c->requestConnectionAsClient(nameAcceptor + "-" + std::to_string(globalAcceptorRank), nameRequester);
     // assertion(c->getRemoteCommunicatorSize() == 1);
 
-    auto request = c->aSend(&utils::MasterSlave::_rank, 0);
+    auto request = c->aSend(utils::MasterSlave::_rank, 0);
 
     requests.push_back(request);
 
     // NOTE:
     // Everything is moved (efficiency)!
-    _mappings.push_back(
-        {0,
-         globalAcceptorRank,
-         std::move(indices),
-         // NOTE:
-         // On the requester participant side, the communication objects behave
-         // as clients, i.e. each of them requests only one connection to
-         // acceptor process (in the acceptor participant).
-         c});
+    // On the requester participant side, the communication objects behave
+    // as clients, i.e. each of them requests only one connection to
+    // acceptor process (in the acceptor participant).
+    _mappings.push_back({
+        0, globalAcceptorRank, std::move(indices), c, com::PtrRequest(), 0});
   }
 
   com::Request::wait(requests);

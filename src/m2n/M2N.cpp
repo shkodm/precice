@@ -1,9 +1,7 @@
 
 #include "M2N.hpp"
-
 #include "DistributedComFactory.hpp"
 #include "DistributedCommunication.hpp"
-#include "GatherScatterCommunication.hpp"
 #include "com/Communication.hpp"
 #include "mesh/Mesh.hpp"
 #include "utils/EventTimings.hpp"
@@ -49,7 +47,7 @@ void M2N::acceptMasterConnection(
 
   if (not utils::MasterSlave::_slaveMode) {
     assertion(_masterCom.use_count() > 0);
-    _masterCom->acceptConnection(nameAcceptor, nameRequester, 0, 1);
+    _masterCom->acceptConnection(nameAcceptor, nameRequester);
     _isMasterConnected = _masterCom->isConnected();
   }
 
