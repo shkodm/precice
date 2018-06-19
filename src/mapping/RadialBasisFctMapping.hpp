@@ -8,6 +8,18 @@
 #include <Eigen/Core>
 #include <Eigen/QR>
 
+
+
+namespace PartitionTests {
+namespace ProvidedBoundingBoxTests {
+struct TestProvidedBoundingBox;
+
+}
+}
+
+
+
+
 namespace precice {
 namespace mapping {
 

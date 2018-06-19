@@ -112,6 +112,7 @@ void ReceivedPartition::compute()
       _mesh->clear();
       _mesh->addMesh(filteredMesh);
       _mesh->computeState();
+     
       DEBUG("Master mesh after filtering, #vertices " << _mesh->vertices().size());
 
       if((_fromMapping.use_count()>0 && _fromMapping->getOutputMesh()->vertices().size()>0) ||
