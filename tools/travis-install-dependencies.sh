@@ -8,6 +8,13 @@ set -e
 
 LOCAL_INSTALL=$1
 
+
+# Download, compile and install Boost
+wget -nv 'http://downloads.sourceforge.net/project/boost/boost/1.65.0/boost_1_65_0.tar.bz2' -O - | tar xj
+cd boost_1_65_0
+./bootstrap.sh --prefix=$LOCAL_INSTALL > ~/boost.bootstrap
+./b2 -j2 --with-program_options --with-test --with-filesystem --with-log install > ~/boost.b2
+
 # Don't test for $LOCAL_INSTALL, because it's created by the cacher.
 if [ ! -d $LOCAL_INSTALL/include ]; then
     mkdir -p $LOCAL_INSTALL/include $LOCAL_INSTALL/lib
