@@ -34,5 +34,5 @@ fi
 if [ ! -d $LOCAL_INSTALL/cmake ]; then
     CMAKE_URL="http://www.cmake.org/files/v3.5/cmake-3.5.1-Linux-x86_64.tar.gz"
     mkdir -p ${LOCAL_INSTALL}/cmake
-    travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
+    wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
 fi
