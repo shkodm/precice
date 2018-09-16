@@ -31,8 +31,8 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
 fi
 
 # get version of cmake, that works with boost 1.60.0 
-if [ ! -d $LOCAL_INSTALL/cmake ]; then
-    CMAKE_URL="http://www.cmake.org/files/v3.5/cmake-3.5.1-Linux-x86_64.tar.gz"
-    mkdir -p ${LOCAL_INSTALL}/cmake
-    wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
-fi
+#if [ ! -d $LOCAL_INSTALL/cmake ]; then
+rm -r ${LOCAL_INSTALL}/cmake 
+CMAKE_URL="http://www.cmake.org/files/v3.12/cmake-3.12.2-Linux-x86_64.tar.gz"
+mkdir -p ${LOCAL_INSTALL}/cmake
+wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
