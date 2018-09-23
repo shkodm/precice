@@ -24,7 +24,7 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
     # Download and extract Eigen with cmake
     wget -nv http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2 -O - | tar xj
     cd eigen-eigen-da9b4e14c255; mkdir build; cd build 
-    cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL
+    cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL .. 
     make install
     cd ../..
 
