@@ -36,10 +36,13 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
 fi
 
 # get version of cmake, that works with boost 1.60.0
-if [ ! -d $LOCAL_INSTALL/cmake ]; then
-  rm -rf ${LOCAL_INSTALL}/cmake
-  CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
-  mkdir -p ${LOCAL_INSTALL}/cmake
-  wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
-  # make cmake available
+rm -rf ${LOCAL_INSTALL}/cmake
+if [ $TRAVIS_OS_NAME = osx ]; then
+	CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.1-Darwin-x86_64.tar.gz"
+else
+	CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
 fi 
+
+mkdir -p ${LOCAL_INSTALL}/cmake
+wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
+# make cmake available
