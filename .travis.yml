@@ -21,7 +21,6 @@ addons:
       - liblapack-dev
   homebrew: 
     packages:
-      sources: 
       - open-mpi 
       - python
       - numpy 
