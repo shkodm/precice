@@ -8,14 +8,6 @@ set -e
 
 LOCAL_INSTALL=$1
 
-# get version of cmake, that works with boost 1.60.0
-#if [ ! -d $LOCAL_INSTALL/cmake ]; then
-rm -rf ${LOCAL_INSTALL}/cmake
-CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
-mkdir -p ${LOCAL_INSTALL}/cmake
-wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
-# make cmake available
-export PATH=${LOCAL_INSTALL}/cmake/bin:${PATH}
 
 # Don't test for $LOCAL_INSTALL, because it's created by the cacher.
 if [ ! -d $LOCAL_INSTALL/include ]; then
@@ -25,8 +17,8 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
     mkdir -p $LOCAL_INSTALL/eigen3
     wget -nv http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2 -O - | tar xj -C $LOCAL_INSTALL/eigen3 --strip-components=1 eigen-eigen-da9b4e14c255
 
-    wget -nv 'https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.bz2' -O - | tar xj
-    cd boost_1_65_0
+    wget -nv 'http://downloads.sourceforge.net/project/boost/boost/1.60.0/boost_1_60_0.tar.bz2' -O - | tar xj
+    cd boost_1_60_0
     ./bootstrap.sh --prefix=$LOCAL_INSTALL > ~/boost.bootstrap
     ./b2 -j2 --with-program_options --with-test --with-filesystem --with-log install > ~/boost.b2
 
@@ -39,3 +31,11 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
     make > ~/petsc.make
 fi
 
+# get version of cmake, that works with boost 1.60.0
+if [ ! -d $LOCAL_INSTALL/cmake ]; then
+  rm -rf ${LOCAL_INSTALL}/cmake
+  CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
+  mkdir -p ${LOCAL_INSTALL}/cmake
+  wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${LOCAL_INSTALL}/cmake
+  # make cmake available
+fi 
