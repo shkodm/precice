@@ -22,7 +22,6 @@ addons:
   homebrew: 
     packages:
       - python
-      - numpy 
       - scons 
       - libxml2 
 
