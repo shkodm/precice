@@ -23,9 +23,10 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
 
     # Download and extract Eigen with cmake
     wget -nv http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2 -O - | tar xj
-    cd eigen-eigen-da9b4e14c255; make build
+    cd eigen-eigen-da9b4e14c255; mkdir build; cd build 
     cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL
     make install
+    cd ../..
 
     wget -nv 'https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.bz2' -O - | tar xj
     cd boost_1_65_0
