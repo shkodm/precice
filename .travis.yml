@@ -48,6 +48,7 @@ cache:
     - $LOCAL_INSTALL
 
 before_install:
+  - if [ $TRAVIS_OS_NAME = osx ]; then export PETSC_ARCH=arch-darwin-c-debug; else export PETSC_ARCH=PETSC_ARCH=arch-linux2-c-debug; fi
   - if [ $TRAVIS_OS_NAME = osx ]; then brew cask uninstall oclint; brew install open-mpi; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" && export CC="gcc-6"; fi
   - export OMPI_CXX=$CXX
