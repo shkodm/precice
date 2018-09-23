@@ -1,6 +1,8 @@
 language: cpp
-dist: trusty
-sudo: false
+
+os: 
+  - linux 
+  - osx 
 
 compiler:
   - gcc
@@ -17,6 +19,14 @@ addons:
       - python-numpy
       - libblas-dev
       - liblapack-dev
+  homebrew: 
+    packages:
+      sources: 
+      - open-mpi 
+      - python
+      - numpy 
+      - scons 
+      - libxml2 
 
 env:
   global:
