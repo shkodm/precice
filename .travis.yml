@@ -39,9 +39,12 @@ env:
     - BOOST_ROOT=${LOCAL_INSTALL}
 
   matrix:
-    - MPI=on PETSC=on
-    - MPI=on PETSC=off
-    - MPI=off PETSC=off
+    include: 
+    - os: osx
+      env: 
+      - MPI=off 
+      - PETSC=off
+      - CXX=clang 
 
 cache:
   directories:
