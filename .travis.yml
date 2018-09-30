@@ -56,7 +56,7 @@ before_script:
 script:
   - cd $TRAVIS_BUILD_DIR
   - cd build
-  - cmake -DPETSC=$PETSC -DMPI=$MPI -DPYTHON=on -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release  ..
+  - cmake -DPETSC=$PETSC -DMPI=$MPI -DPYTHON=on -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX ..
   - cmake --build .
   - cd ../tests
   - if [ "$MPI" = "off" ]; then ../build/testprecice -x -r detailed > boost-test-output; fi
