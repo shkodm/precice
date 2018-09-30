@@ -39,8 +39,23 @@ env:
 matrix: 
   include: 
     - ox: linux
-      compiler: gcc 
+      compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - ox: linux
+      compiler: gcc
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - ox: linux
+      compiler: gcc
+      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
+    - ox: linux
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - ox: linux
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - ox: linux
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
 
 cache:
   directories:
