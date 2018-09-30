@@ -24,7 +24,7 @@ env:
     - LOCAL_INSTALL="$HOME/local"
     - PETSC_ARCH=arch-linux2-c-debug
     - PETSC_DIR=$LOCAL_INSTALL/petsc
-    - CPLUS_INCLUDE_PATH="$PETSC_DIR/include:$PETSC_DIR/$PETSC_ARCH/include:$LOCAL_INSTALL/include:$LOCAL_INSTALL/eigen3:$LOCAL_INSTALL:$CPLUS_INCLUDE_PATH"
+    - CPLUS_INCLUDE_PATH="$PETSC_DIR/include:$PETSC_DIR/$PETSC_ARCH/include:$LOCAL_INSTALL/include:$LOCAL_INSTALL/eigen3:$CPLUS_INCLUDE_PATH"
     - LD_LIBRARY_PATH="$PETSC_DIR/$PETSC_ARCH/lib:$LOCAL_INSTALL/lib:$LD_LIBRARY_PATH"
     - LIBRARY_PATH="$PETSC_DIR/$PETSC_ARCH/lib:$LOCAL_INSTALL/lib:$LIBRARY_PATH"
     - PYTHONPATH="$PETSC_DIR/$PETSC_ARCH/lib:/usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/plat-x86_64-linux-gnu"
@@ -90,7 +90,7 @@ cache:
     - $LOCAL_INSTALL
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PETSC_ARCH=arch-darwin-c-debug; else export PETSC_ARCH=PETSC_ARCH=arch-linux2-c-debug; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PETSC_ARCH=arch-darwin-c-debug; else export PETSC_ARCH=arch-linux2-c-debug; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew cask uninstall oclint; brew install open-mpi; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" && export CC="gcc-6"; fi
   - export OMPI_CXX=$CXX
