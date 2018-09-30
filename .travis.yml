@@ -2,10 +2,6 @@ language: cpp
 dist: trusty
 sudo: false
 
-compiler:
-  - gcc
-  - clang
-
 addons:
   apt:
     sources:
@@ -30,15 +26,39 @@ env:
     - PYTHONPATH="$PETSC_DIR/$PETSC_ARCH/lib:/usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/plat-x86_64-linux-gnu"
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
+
   matrix: 
     include: 
-    - env: BUILD_TYPE=SCONS MPI=on PETSC=on
-    - env: BUILD_TYPE=SCONS MPI=on PETSC=off
-    - env: BUILD_TYPE=SCONS MPI=off PETSC=off
-    - env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-                            
+    - compiler: gcc
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=on
+        - PETSC=on
+    - compiler: gcc
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=on
+        - PETSC=off
+    - compiler: gcc
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=off
+        - PETSC=off
+    - compiler: clang
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=on
+        - PETSC=on
+    - compiler: clang
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=on
+        - PETSC=off
+    - compiler: clang
+      env:
+        - BUILD_TYPE=SCONS
+        - MPI=off
+        - PETSC=off
 
 cache:
   directories:
