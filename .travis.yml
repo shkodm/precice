@@ -30,11 +30,10 @@ env:
     - PYTHONPATH="$PETSC_DIR/$PETSC_ARCH/lib:/usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/plat-x86_64-linux-gnu"
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
+  matrix: 
+  #    - BUILD_TYPE="CMAKE" MPI=on PETSC=off
+    - BUILD_TYPE=SCONS MPI=off PETSC=off
 
-  matrix:
-    - MPI=on PETSC=on
-    - MPI=on PETSC=off
-    - MPI=off PETSC=off
 
 cache:
   directories:
@@ -53,14 +52,20 @@ before_script:
   - mkdir $TRAVIS_BUILD_DIR/build
   - mkdir $TRAVIS_BUILD_DIR/tests
 
-script:
-  - cd $TRAVIS_BUILD_DIR
-  - cd build
-  - cmake -DPETSC=$PETSC -DMPI=$MPI -DPYTHON=on -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX ..
-  - cmake --build .
-  - cd ../tests
-  - if [ "$MPI" = "off" ]; then ../build/testprecice -x -r detailed > boost-test-output; fi
-  - if [ "$MPI" = "on"  ]; then mpirun.openmpi -n 4 --output-filename boost-test-output  ../build/testprecice -r detailed; fi
+script: |
+    if [[ "$BUILD_TYPE" == "CMAKE"]]; then
+      export PRECICE_BUILD_DIR=$TRAVIS_BUILD_DIR/build
+      cd $TRAVIS_BUILD_DIR/build
+      cmake -DPETSC=$PETSC -DMPI=$MPI -DPYTHON=on -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX ..
+      cmake --build .
+    else
+      export PRECICE_BUILD_DIR=$TRAVIS_BUILD_DIR/build/last
+      cd $TRAVIS_BUILD_DIR
+      scons -j 2 petsc=$PETSC mpi=$MPI python=on compiler=$CXX staticlib bin solib tests symlink
+    fi
+    cd ../tests
+    if [ "$MPI" = "off" ]; then $PRECICE_BUILD_DIR/testprecice -x -r detailed > boost-test-output; fi
+    if [ "$MPI" = "on"  ]; then mpirun.openmpi -n 4 --output-filename boost-test-output  $PRECICE_BUILD_DIR/testprecice -r detailed; fi
 
 after_failure:
   - cd $TRAVIS_BUILD_DIR
