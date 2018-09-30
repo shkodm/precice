@@ -39,11 +39,7 @@ env:
     - BOOST_ROOT=${LOCAL_INSTALL}
 
   matrix:
-    - MPI=on PETSC=on
-    - MPI=on PETSC=off
-    - MPI=off PETSC=off
-  exclude:
-    - os: linux 
+    - TRAVIS_OS_NAME=osx MPI=on PETSC=on
 
 cache:
   directories:
