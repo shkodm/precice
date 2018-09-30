@@ -28,37 +28,15 @@ env:
     - BOOST_ROOT=${LOCAL_INSTALL}
 
   matrix: 
-    include: 
-    - compiler: gcc
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=on
-        - PETSC=on
-    - compiler: gcc
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=on
-        - PETSC=off
-    - compiler: gcc
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=off
-        - PETSC=off
-    - compiler: clang
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=on
-        - PETSC=on
-    - compiler: clang
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=on
-        - PETSC=off
-    - compiler: clang
-      env:
-        - BUILD_TYPE=SCONS
-        - MPI=off
-        - PETSC=off
+    - MPI=on PETSC=on
+    - MPI=on PETSC=off
+    - MPI=off PETSC=off
+
+matrix: 
+  include: 
+    - ox: linux
+      compiler: gcc 
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
 
 cache:
   directories:
