@@ -2,6 +2,10 @@ language: cpp
 dist: trusty
 sudo: false
 
+compiler:
+  - gcc
+  - clang
+
 addons:
   apt:
     sources:
