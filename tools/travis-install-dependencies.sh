@@ -26,7 +26,7 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
     cd $LOCAL_INSTALL
     git clone -b maint https://bitbucket.org/petsc/petsc petsc
     cd petsc
-    if [ $TRAVIS_OS_NAME = osx ]; then 
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then 
       export PETSC_ARCH=arch-darwin-c-debug 
     else 
       export PETSC_ARCH=arch-linux2-c-debug
@@ -37,7 +37,7 @@ fi
 
 # get version of cmake, that works with boost 1.60.0
 if [ ! -d $LOCAL_INSTALL/cmake ]; then
-  if [ $TRAVIS_OS_NAME = osx ]; then
+  if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.1-Darwin-x86_64.tar.gz"
   else
     CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
