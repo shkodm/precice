@@ -31,9 +31,14 @@ env:
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
   matrix: 
-  #    - BUILD_TYPE="CMAKE" MPI=on PETSC=off
-    - BUILD_TYPE=SCONS MPI=off PETSC=off
-
+    include: 
+    - env: BUILD_TYPE=SCONS MPI=on PETSC=on
+    - env: BUILD_TYPE=SCONS MPI=on PETSC=off
+    - env: BUILD_TYPE=SCONS MPI=off PETSC=off
+    - env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - env: BUILD_TYPE=CMAKE MPI=off PETSC=off
+                            
 
 cache:
   directories:
