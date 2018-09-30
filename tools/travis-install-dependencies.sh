@@ -41,6 +41,7 @@ if [ ! -d $LOCAL_INSTALL/cmake ]; then
     CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.1-Darwin-x86_64.tar.gz"
   else
     CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
+  fi 
   rm -rf ${LOCAL_INSTALL}/cmake
   CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.1-Linux-x86_64.tar.gz"
   mkdir -p ${LOCAL_INSTALL}/cmake
