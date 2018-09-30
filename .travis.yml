@@ -38,25 +38,32 @@ env:
 
 matrix: 
   include: 
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - ox: linux
+    - if: type = cron
+      ox: linux
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - os: osx
+    - if: type = cron
+      os: osx
       addons:
         homebrew:
         packages:
@@ -65,7 +72,8 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - os: osx
+    - if: type = cron
+      os: osx
       addons:
         homebrew:
         packages:
@@ -74,7 +82,8 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - os: osx
+    - if: type = cron
+      os: osx
       addons:
         homebrew:
         packages:
