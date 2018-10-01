@@ -38,31 +38,25 @@ env:
 
 matrix: 
   include: 
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron
-      ox: linux
+    - if: type = cron or branch = master
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron
+    - if: type = cron or branch = master
       os: osx
       addons:
         homebrew:
@@ -72,7 +66,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron
+    - if: type = cron or branch = master
       os: osx
       addons:
         homebrew:
@@ -82,7 +76,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron
+    - if: type = cron or branch = master
       os: osx
       addons:
         homebrew:
@@ -92,6 +86,8 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
+  allow_failures:
+    - os: osx
 
 
 cache:
