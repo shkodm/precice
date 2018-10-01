@@ -38,25 +38,25 @@ env:
 
 matrix: 
   include: 
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
@@ -66,7 +66,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
@@ -76,7 +76,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
