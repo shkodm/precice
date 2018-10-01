@@ -65,7 +65,7 @@ endif()
 find_package (Threads REQUIRED)
 
 
-find_package(Boost 1.65.0 REQUIRED
+find_package(Boost 1.60.0 REQUIRED
   COMPONENTS filesystem log log_setup program_options system thread unit_test_framework)
 target_compile_definitions(precice PRIVATE BOOST_ALL_DYN_LINK BOOST_ASIO_ENABLE_OLD_SERVICES)
 target_link_libraries(precice PUBLIC ${Boost_LIBRARIES})
