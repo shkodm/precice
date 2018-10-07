@@ -129,3 +129,4 @@ install(TARGETS precice binprecice
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include/precice
   RUNTIME DESTINATION bin)
+
