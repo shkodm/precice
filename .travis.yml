@@ -87,6 +87,7 @@ matrix:
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
     - name: "PR check"
+    - if: type = pull_request
       os: linux
       #zero out all the packages, that are used for other scripts
       before_install:
@@ -98,10 +99,9 @@ matrix:
           packages:
       script: | 
           # check change log
-          last_commit=$(git log | head -1 | awk '{ print $2 }')
-          lines_changed=$(git diff-tree --numstat --no-commit-id $last_commit | awk '{ sum += $1 + $2 ; } END {print sum;}')
+          lines_changed=$(git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | awk '{ sum+= $1 + $2 ; } END { print sum; }')
           # check changelog for ids
-          git diff-tree --numstat --no-commit-id $last_commit
+          git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat
           echo $lines_changed
           if [ $lines_changed -gt 100 ]; then
             a=$(git diff-tree --numstat --no-commit-id $last_commit | grep 'CHANGELOG.md')
