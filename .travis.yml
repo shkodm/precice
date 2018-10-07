@@ -107,6 +107,7 @@ matrix:
             a=$(git diff-tree --numstat --no-commit-id $last_commit | grep 'CHANGELOG.md')
             if [ -z $a ]; then
               echo "Changelog was not modified, even though number of lines changed exceeded 100"
+              exit 1 
             fi
           fi
 

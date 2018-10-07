@@ -1,8 +1,6 @@
 #!/bin/sh
 # check pull request
 
-set -x
-set -e
 
 # check change log
 last_commit=$(git log | head -1 | awk '{ print $2 }')
@@ -14,6 +12,7 @@ if [ $lines_changed -gt 100 ]; then
   a=$(git diff-tree --numstat --no-commit-id $last_commit | grep 'CHANGELOG.md')
   if [ -z $a ]; then
     echo "Changelog was not modified, even though number of lines changed exceeded 100"
+    exit 1 
   fi
 fi
 
