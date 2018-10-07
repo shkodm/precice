@@ -104,7 +104,7 @@ matrix:
           git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat
           echo $lines_changed
           if [ $lines_changed -gt 100 ]; then
-            a=$(git diff-tree --numstat --no-commit-id $last_commit | grep 'CHANGELOG.md')
+            a=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | grep 'CHANGELOG.md')
             if [ -z $a ]; then
               echo "Changelog was not modified, even though number of lines changed exceeded 100"
               exit 1 
