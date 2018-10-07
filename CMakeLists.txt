@@ -130,4 +130,3 @@ install(TARGETS precice binprecice
   PUBLIC_HEADER DESTINATION include/precice
   RUNTIME DESTINATION bin)
 
-
