@@ -87,7 +87,7 @@ matrix:
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
     - name: "PR check"
-    - if: type = pull_request
+      if: type = pull_request
       os: linux
       #zero out all the packages, that are used for other scripts
       before_install:
