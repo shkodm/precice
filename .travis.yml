@@ -38,6 +38,8 @@ env:
 
 matrix: 
   include: 
+    - name: "PR check"
+      script: tools/travis-pr-check.sh
     - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
