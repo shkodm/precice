@@ -1,6 +1,8 @@
 #!/bin/sh
-
 # check pull request
+
+set -x
+set -e
 
 # check change log
 last_commit=$(git log | head -1 | awk '{ print $2 }')

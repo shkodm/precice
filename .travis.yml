@@ -38,56 +38,65 @@ env:
 
 matrix: 
   include: 
+    - if: type = cron or branch = cmake-polish
+      compiler: gcc
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - if: type = cron or branch = cmake-polish
+      compiler: gcc
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - if: type = cron or branch = cmake-polish
+      compiler: gcc
+      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
+    - if: type = cron or branch = cmake-polish
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - if: type = cron or branch = cmake-polish
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - if: type = cron or branch = cmake-polish
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
+    - if: type = cron or branch = cmake-polish
+      os: osx
+      addons:
+        homebrew:
+        packages:
+          - python
+          - scons
+          - libxml2
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
+    - if: type = cron or branch = cmake-polish
+      os: osx
+      addons:
+        homebrew:
+        packages:
+          - python
+          - scons
+          - libxml2
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
+    - if: type = cron or branch = cmake-polish
+      os: osx
+      addons:
+        homebrew:
+        packages:
+          - python
+          - scons
+          - libxml2
+      compiler: clang
+      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
     - name: "PR check"
+      os: linux
+      #zero out all the packages, that are used for other scripts
+      before_install:
+      install:
+      before_script:
+      addons:
+        apt:
+          sources:
+          packages:
       script: tools/travis-pr-check.sh
-    - if: type = cron or branch = cmake-polish
-      compiler: gcc
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = cmake-polish
-      compiler: gcc
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = cmake-polish
-      compiler: gcc
-      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = cmake-polish
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = cmake-polish
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = cmake-polish
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = cmake-polish
-      os: osx
-      addons:
-        homebrew:
-        packages:
-          - python
-          - scons
-          - libxml2
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = cmake-polish
-      os: osx
-      addons:
-        homebrew:
-        packages:
-          - python
-          - scons
-          - libxml2
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = cmake-polish
-      os: osx
-      addons:
-        homebrew:
-        packages:
-          - python
-          - scons
-          - libxml2
-      compiler: clang
-      env: BUILD_TYPE=CMAKE MPI=off PETSC=off
   allow_failures:
     - os: osx
 
