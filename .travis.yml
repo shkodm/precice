@@ -88,7 +88,7 @@ matrix:
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
     - stage: "System tests"
       os: linux
-		  script: |
+      script: | 
         curl -LO --retry 3 https://raw.github.com/mernst/plume-lib/master/bin/trigger-travis.sh
         sh trigger-travis.sh shkodm/systemtests $TRAVIS_ACCESS_TOKEN
 
