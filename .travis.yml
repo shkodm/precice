@@ -38,25 +38,25 @@ env:
 
 matrix: 
   include: 
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
@@ -66,7 +66,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
@@ -76,7 +76,7 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = cmake-polish
       os: osx
       addons:
         homebrew:
@@ -91,6 +91,26 @@ matrix:
 		  script:  |
 				curl -LO --retry 3 https://raw.github.com/mernst/plume-lib/master/bin/trigger-travis.sh
 				sh trigger-travis.sh shkodm/systemtests $TRAVIS_ACCESS_TOKEN
+    - name: "PR check"
+      if: type = pull_request
+      os: linux
+      #zero out all the packages, that are used for other scripts
+      before_install:
+      cache:
+      install:
+      before_script:
+      addons:
+      script: | 
+          # check change log
+          # we merform git diff between commit ids of current branch and the one from PR
+          lines_changed=$(git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | awk '{ sum+= $1 + $2 ; } END { print sum; }')
+          if [ $lines_changed -gt 100 ]; then
+            a=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | grep 'CHANGELOG.md')
+            if [ -z "$a" ]; then
+              echo "Changelog was not modified, even though number of lines changed exceeded 100"
+              exit 1 
+            fi
+          fi
 
   allow_failures:
     - os: osx
