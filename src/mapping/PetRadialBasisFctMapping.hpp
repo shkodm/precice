@@ -360,7 +360,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   // Stores col -> value for each row;
   std::vector<std::vector<std::pair<int, double>>> vertexData;
 
-  if (_preallocation == Preallocation::SAVED) {
+  if (_preallocation == Preallocation::SAVE) {
     vertexData = savedPreallocationMatrixC(inMesh);
   }
   if (_preallocation == Preallocation::COMPUTE) {
@@ -408,7 +408,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
     }
 
     // -- SETS THE COEFFICIENTS --
-    if (_preallocation == Preallocation::SAVED or _preallocation == Preallocation::TREE) {
+    if (_preallocation == Preallocation::SAVE or _preallocation == Preallocation::TREE) {
       const auto & rowVertices = vertexData[preallocRow];
       for (const auto & vertex : rowVertices) {
         rowVals[colNum] = _basisFunction.evaluate(vertex.second);
@@ -449,7 +449,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
   ierr = MatAssemblyBegin(_matrixC, MAT_FINAL_ASSEMBLY); CHKERRV(ierr);
   ierr = MatAssemblyBegin(_matrixQ, MAT_FINAL_ASSEMBLY); CHKERRV(ierr);
 
-  if (_preallocation == Preallocation::SAVED) {
+  if (_preallocation == Preallocation::SAVE) {
     vertexData = savedPreallocationMatrixA(inMesh, outMesh);
   }
   if (_preallocation == Preallocation::COMPUTE) {
@@ -490,7 +490,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::computeMapping()
     }
 
     // -- SETS THE COEFFICIENTS --
-    if (_preallocation == Preallocation::SAVED or _preallocation == Preallocation::TREE) {
+    if (_preallocation == Preallocation::SAVE or _preallocation == Preallocation::TREE) {
       const auto & rowVertices = vertexData[row - ownerRangeABegin];
       for (const auto & vertex : rowVertices) {
         rowVals[colNum] = _basisFunction.evaluate(vertex.second);
@@ -873,7 +873,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::estimatePreallocationMat
       meshArea *= bbox[d].second - bbox[d].first;
 
   // supportVolume = math::PI * 4.0/3.0 * std::pow(supportRadius, 3);
-  double supportVolume;
+  double supportVolume = 0;
   if (getDimensions() == 2)
     supportVolume = 2 * supportRadius;
   else if (getDimensions() == 3)
@@ -918,7 +918,7 @@ void PetRadialBasisFctMapping<RADIAL_BASIS_FUNCTION_T>::estimatePreallocationMat
       meshArea *= bbox[d].second - bbox[d].first;
 
   // supportVolume = math::PI * 4.0/3.0 * std::pow(supportRadius, 3);
-  double supportVolume;
+  double supportVolume = 0;
   if (getDimensions() == 2)
     supportVolume = 2 * supportRadius;
   else if (getDimensions() == 3)
@@ -1450,4 +1450,4 @@ std::vector<std::vector<std::pair<int, double>>> PetRadialBasisFctMapping<RADIAL
 
 }} // namespace precice, mapping
 
-#endif
+#endif // PRECICE_NO_PETSC
