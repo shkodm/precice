@@ -98,6 +98,7 @@ matrix:
       script: | 
           # check change log
           # we merform git diff between commit ids of current branch and the one from PR
+          set - e
           lines_changed=$(git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | awk '{ sum+= $1 + $2 ; } END { print sum; }')
           if [ $lines_changed -gt 100 ]; then
             a=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | grep 'CHANGELOG.md')
@@ -106,6 +107,12 @@ matrix:
               exit 1 
             fi
           fi
+      after_success: |
+        COMMENT="Thank you for your contribution. No problem found in your pull request"
+        curl -H "Authorization: token $GITHUB_TOKEN" -X POST -d "{\"body\": \"$COMMENT\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+      after_failure: |
+        COMMENT="Thank you for your contribution. However, it seems, like you are forgot to update CHANGELOG.md"
+        curl -H "Authorization: token $GITHUB_TOKEN" -X POST -d "{\"body\": \"$COMMENT\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
 
   allow_failures:
     - os: osx
