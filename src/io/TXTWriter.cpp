@@ -27,4 +27,11 @@ TXTWriter:: ~TXTWriter()
   }
 }
 
+int clang_check2()
+{
+  int a,b; 
+  return 
+    23; 
+}
+
 }} // namespace precice, io

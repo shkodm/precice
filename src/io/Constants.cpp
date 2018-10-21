@@ -19,5 +19,12 @@ int exportVTKXML()
   return 3;
 }
 
+int clang_check1()
+{
+
+  return 
+    42; 
+}
+
 }}} // namespace precice, io, constants
 
