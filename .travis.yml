@@ -30,7 +30,6 @@ env:
     - PYTHONPATH="$PETSC_DIR/$PETSC_ARCH/lib:/usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/plat-x86_64-linux-gnu"
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
-    - BOT_MSG="Thank you for your contribution"
 
   matrix: 
     - MPI=on PETSC=on
@@ -97,11 +96,9 @@ matrix:
       before_script:
       addons:
       # we use source, since we need to get back BOT_MSG to the current subshell
-      script: source tools/travis-pr-check.sh
-      after_success: |
-        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
-      after_failure: |
-        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+      script: bash tools/travis-pr-check.sh
+      after_success:
+      after_failure:
 
   allow_failures:
     - os: osx
