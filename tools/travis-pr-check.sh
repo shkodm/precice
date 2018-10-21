@@ -28,14 +28,15 @@ if [ -n "$files" ]; then
   for file in "$files"; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
     if [ "$?" -eq 0 ]; then
-      not_formatted+="\n    *\`$file\`"
+      not_formatted+="\n    * \`$file\` "
       pr_invalid=1
     fi
   done
 fi
 
 if [ -n "$not_formatted" ]; then
-  BOT_MSG+="\n* Your code formatting did not follow our clang-format style in following files:  $not_formatted"
+  BOT_MSG+="\n* Your code formatting did not follow our clang-format style in following files:"
+  BOT_MSG+="$not_formatted"
 fi
 
 # send message to github if we failed
