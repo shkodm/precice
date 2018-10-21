@@ -52,10 +52,3 @@ All notable changes to this project will be documented in this file. For future 
 
 ## 1.0.1
 - Fix compilation issue with the python interface.
-
-
-
-
-
-
-
