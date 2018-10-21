@@ -96,7 +96,7 @@ matrix:
       install:
       before_script:
       addons:
-      script: tools/travis-pr-check.sh
+      script: bash tools/travis-pr-check.sh
       after_success: |
         curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       after_failure: |
