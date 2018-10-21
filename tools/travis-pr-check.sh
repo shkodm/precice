@@ -24,7 +24,7 @@ fi
 # Check formatting
 not_formatted='   '
 # gti diff ,
-files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only )
+files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | xargs )
 if [ -n "$files" ]; then
   for file in "$files"; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
@@ -42,7 +42,7 @@ fi
 
 # send message to github if we failed
 if [[ "$pr_invalid" -eq 1 ]]; then
-#  curl -s -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
   echo "$BOT_MSG"
+  curl -s -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
   exit 1
 fi
