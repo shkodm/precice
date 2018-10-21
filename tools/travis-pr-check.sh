@@ -26,7 +26,7 @@ not_formatted='   '
 # gti diff ,
 files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | xargs )
 if [ -n "$files" ]; then
-  for file in "$files"; do
+  for file in $files; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
     if [ "$?" -eq 0 ]; then
       not_formatted+="\n    * $file "
