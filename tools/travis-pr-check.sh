@@ -2,8 +2,6 @@
 
 # Checks pull request
 
-
-set -e
 set -x
 
 # Chechking change log
