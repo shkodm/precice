@@ -30,6 +30,7 @@ env:
     - PYTHONPATH="$PETSC_DIR/$PETSC_ARCH/lib:/usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/plat-x86_64-linux-gnu"
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
+    - BOT_MSG="Thank you for your contribution"
 
   matrix: 
     - MPI=on PETSC=on
@@ -95,24 +96,11 @@ matrix:
       install:
       before_script:
       addons:
-      script: | 
-          # check change log
-          # we merform git diff between commit ids of current branch and the one from PR
-          set - e
-          lines_changed=$(git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | awk '{ sum+= $1 + $2 ; } END { print sum; }')
-          if [ $lines_changed -gt 100 ]; then
-            a=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | grep 'CHANGELOG.md')
-            if [ -z "$a" ]; then
-              echo "Changelog was not modified, even though number of lines changed exceeded 100"
-              exit 1 
-            fi
-          fi
+      script: tools/travis-pr-check.sh
       after_success: |
-        COMMENT="Thank you for your contribution. No problem found in your pull request"
-        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$COMMENT\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       after_failure: |
-        COMMENT="Thank you for your contribution. However, it seems, like you are forgot to update CHANGELOG.md"
-        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$COMMENT\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+        curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
 
   allow_failures:
     - os: osx
