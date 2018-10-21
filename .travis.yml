@@ -96,7 +96,8 @@ matrix:
       install:
       before_script:
       addons:
-      script: bash tools/travis-pr-check.sh
+      # we use source, since we need to get back BOT_MSG to the current subshell
+      script: source tools/travis-pr-check.sh
       after_success: |
         curl -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$BOT_MSG\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       after_failure: |
