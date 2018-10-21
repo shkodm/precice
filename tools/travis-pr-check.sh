@@ -16,15 +16,15 @@ if [ $lines_changed -gt 100 ]; then
   git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --numstat | grep 'CHANGELOG.md'
   if [ "$?" -eq 1 ]; then
     pr_invalid=1
-    BOT_MSG+="\nSome suggestions for your pull request\n* It seems, like you  forgot to update CHANGELOG.md"
+    BOT_MSG+="\nSome suggestions for your pull request\n* It seems, like you  forgot to update \`CHANGELOG.md\`"
   fi
 fi
 
 
 # Check formatting
 not_formatted='   '
-# gti diff ,
-files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | xargs )
+# get diff from this commit and filter filtypes that are needed
+files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | grep '.cpp\|.hpp' xargs )
 if [ -n "$files" ]; then
   for file in $files; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
