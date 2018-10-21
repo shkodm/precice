@@ -22,14 +22,14 @@ fi
 
 
 # Check formatting
-not_formatted=''
+not_formatted='   '
 # gti diff ,
 files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only )
 if [ -n "$files" ]; then
   for file in "$files"; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
     if [ "$?" -eq 0 ]; then
-      not_formatted+="\n    * $file "
+      not_formatted+="* $file\n   "
       pr_invalid=1
     fi
   done
