@@ -24,7 +24,7 @@ fi
 # Check formatting
 not_formatted='   '
 # get diff from this commit and filter filtypes that are needed
-files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | grep '.cpp\|.hpp' xargs )
+files=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | grep '.cpp\|.hpp' | xargs )
 if [ -n "$files" ]; then
   for file in $files; do
     clang-format -style=file -output-replacements-xml $file  | grep -c "<replacement " > /dev/null
