@@ -37,7 +37,7 @@ env:
     - EIGEN3_ROOT_DIR=${LOCAL_INSTALL}
     - BOOST_ROOT=${LOCAL_INSTALL}
     # required for boost linking on macOS
-    - DYLD_LIBRARY_PATH={LOCAL_INSTALL}/stage/lib
+    - DYLD_LIBRARY_PATH=${LOCAL_INSTALL}/stage/lib
 
   matrix:
     - TRAVIS_OS_NAME=osx MPI=off PETSC=off
