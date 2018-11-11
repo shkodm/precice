@@ -42,7 +42,7 @@ matrix:
       #zero out all the packages, that are used for other scripts
       before_install:
       cache:
-      install: docker build -f tools/.travis/Dockerfile.precice1804
+      install: docker build -f tools/.travis/Dockerfile.precice1804 .
       before_script:
       addons:
       # we use source, since we need to get back BOT_MSG to the current subshell
