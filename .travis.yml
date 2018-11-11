@@ -34,19 +34,33 @@ env:
     - MPI=off PETSC=off
 
 matrix:
-  include: 
-    - name: "Ubuntu 18.04 check"
+  include:
+    - name: "Ubuntu 18.04 build check"
       services:
         - docker
       os: linux
       #zero out all the packages, that are used for other scripts
       before_install:
       cache:
-      install: docker build -f tools/.travis/Dockerfile.precice1804 .
+      install:
       before_script:
       addons:
-      # we use source, since we need to get back BOT_MSG to the current subshell
-      script: bash tools/travis-pr-check.sh
+      # just make sure build is succesfull, don't do any tests
+      script:  docker build -f tools/.travis/Dockerfile.precice1804 .
+      after_success:
+      after_failure:
+    - name: "Ubuntu 16.04 build check"
+      services:
+        - docker
+      os: linux
+      #zero out all the packages, that are used for other scripts
+      before_install:
+      cache:
+      install:
+      before_script:
+      addons:
+      # just make sure build is succesfull, don't do any tests
+      script:  docker build -f tools/.travis/Dockerfile.precice1604 .
       after_success:
       after_failure:
 
