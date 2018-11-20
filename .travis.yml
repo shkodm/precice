@@ -124,6 +124,21 @@ matrix:
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
 
+      # check PR request formatting
+    - name: "PR check"
+      if: type = pull_request
+      os: linux
+      #zero out all the packages, that are used for other scripts
+      before_install:
+      cache:
+      install:
+      before_script:
+      addons:
+      # we use source, since we need to get back BOT_MSG to the current subshell
+      script: bash tools/travis-pr-check.sh
+      after_success:
+      after_failure:
+
   allow_failures:
     - os: osx
 
