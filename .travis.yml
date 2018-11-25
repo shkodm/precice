@@ -153,7 +153,7 @@ matrix:
           fi
         - travis_wait spack install cmake@3.7.2~openssl~ncurses
         - travis_wait spack install boost@1.60.0  -atomic -chrono -date_time -exception -graph -iostreams -locale -math -random -regex -serialization -signals -timer -wave
-        - travis_wait spack install eigen@3.3.1 -fftw -metis -mpfr -scotch -suitesparse ^openmpi@3.1.2
+        - travis_wait spack install eigen@3.3.1 -fftw -metis -mpfr -scotch -suitesparse
         - spack clean -a
         - source /etc/profile &&
           source $SPACK_ROOT/share/spack/setup-env.sh
