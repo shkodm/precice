@@ -152,7 +152,8 @@ matrix:
             echo -e "config:""\n  build_jobs:"" 2" > $SPACK_ROOT/etc/spack/config.yaml;
           fi
         - travis_wait spack install cmake@3.7.2~openssl~ncurses
-        - travis_wait spack install boost@1.62.0~graph~iostream~locale~log~wave
+        - travis_wait spack install boost@1.60.0  -atomic -chrono -date_time -exception -graph -iostreams -locale -math -random -regex -serialization -signals -timer -wave
+        - travis_wait spack install eigen@3.3.1 -fftw -metis -mpfr -scotch -suitesparse ^openmpi@3.1.2
         - spack clean -a
         - source /etc/profile &&
           source $SPACK_ROOT/share/spack/setup-env.sh
