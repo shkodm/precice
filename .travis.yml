@@ -157,17 +157,10 @@ matrix:
         - spack clean -a
         - source /etc/profile &&
           source $SPACK_ROOT/share/spack/setup-env.sh
-        - spack load cmake
-        - spack load boost
 
       before_script:
       # just make sure build is succesfull, don't do any tests
       script:
-        - mkdir -p $HOME/build
-        - cd $HOME/build
-        - cmake $TRAVIS_BUILD_DIR
-        - make -j 2
-        - make test
       after_success:
       after_failure:
 
