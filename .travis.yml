@@ -124,6 +124,52 @@ matrix:
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
 
+    - name: "Spack build"
+      os: linux
+      cache:
+        apt: true
+        directories:
+          - $HOME/.cache
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - environment-modules
+      before_install:
+        - export CXX=g++-4.9
+        - export CC=gcc-4.9
+        - export FC=gfortran-4.9
+        - export CXXFLAGS="-std=c++11"
+        - export SPACK_ROOT=$HOME/.cache/spack
+        - export PATH=$PATH:$HOME/.cache/spack/bin
+
+      install:
+        - if ! which spack >/dev/null; then
+            mkdir -p $SPACK_ROOT &&
+            git clone --depth 50 https://github.com/spack/spack.git $SPACK_ROOT &&
+            echo -e "config:""\n  build_jobs:"" 2" > $SPACK_ROOT/etc/spack/config.yaml;
+          fi
+        - travis_wait spack install cmake@3.7.2~openssl~ncurses
+        - travis_wait spack install boost@1.62.0~graph~iostream~locale~log~wave
+        - spack clean -a
+        - source /etc/profile &&
+          source $SPACK_ROOT/share/spack/setup-env.sh
+        - spack load cmake
+        - spack load boost
+
+      before_script:
+      # just make sure build is succesfull, don't do any tests
+      script:
+        - mkdir -p $HOME/build
+        - cd $HOME/build
+        - cmake $TRAVIS_BUILD_DIR
+        - make -j 2
+        - make test
+      after_success:
+      after_failure:
+
   allow_failures:
     - os: osx
 
