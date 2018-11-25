@@ -155,8 +155,6 @@ matrix:
         - travis_wait spack install boost@1.60.0  -atomic -chrono -date_time -exception -graph -iostreams -locale -math -random -regex -serialization -signals -timer -wave
         - travis_wait 30 spack install eigen@3.3.1 -fftw -metis -mpfr -scotch -suitesparse
         - spack clean -a
-        - source /etc/profile &&
-          source $SPACK_ROOT/share/spack/setup-env.sh
 
       before_script:
       # just make sure build is succesfull, don't do any tests
