@@ -139,7 +139,7 @@ before_install:
   - if [ "$MPI" = "on" ]; then export CXX="mpicxx"; fi
 
 install:
-  - travis_wait 30 $TRAVIS_BUILD_DIR/tools/travis-install-dependencies.sh $LOCAL_INSTALL
+  - $TRAVIS_BUILD_DIR/tools/travis-install-dependencies.sh $LOCAL_INSTALL
   - export PATH=${LOCAL_INSTALL}/cmake/bin:${PATH}
 
 before_script:
