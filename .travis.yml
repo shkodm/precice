@@ -148,7 +148,6 @@ before_script:
   - mkdir $TRAVIS_BUILD_DIR/tests
 
 script: |
-    set -e
     if [ "$BUILD_TYPE" = "CMAKE" ]; then
       export PRECICE_BUILD_DIR=$TRAVIS_BUILD_DIR/build
       cd $TRAVIS_BUILD_DIR/build
