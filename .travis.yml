@@ -41,27 +41,27 @@ matrix:
   include:
 
       # testing builds on cmake
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: gcc
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
 
       # testing  builds on  18.04 in docker container
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       name: "Ubuntu 18.04 build check"
       services:
         - docker
@@ -77,7 +77,7 @@ matrix:
       after_failure:
 
       # testing  builds on 16.04 in docker container
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       name: "Ubuntu 16.04 build check"
       services:
         - docker
@@ -93,7 +93,7 @@ matrix:
       after_failure:
 
       # testing on macOS
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       os: osx
       addons:
         homebrew:
@@ -104,7 +104,7 @@ matrix:
           - open-mpi
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=on
-    - if: type = cron or branch = master
+    - if: type = cron or branch = travis_fixes
       os: osx
       addons:
         homebrew:
@@ -114,7 +114,8 @@ matrix:
           - libxml2
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
-    - os: osx
+    - if: type = cron or branch = travis_fixes
+      os: osx
       addons:
         homebrew:
         packages:
