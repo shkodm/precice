@@ -17,6 +17,7 @@ addons:
       - python-numpy
       - libblas-dev
       - liblapack-dev
+      - cmake
 
 env:
   global:
