@@ -113,6 +113,7 @@ matrix:
           - python
           - scons
           - libxml2
+          - open-mpi
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=on PETSC=off
     - if: type = cron or branch = travis_fixes
@@ -123,6 +124,7 @@ matrix:
           - python
           - scons
           - libxml2
+          - open-mpi
       compiler: clang
       env: BUILD_TYPE=CMAKE MPI=off PETSC=off
 
@@ -166,4 +168,5 @@ script: |
 after_failure:
   - cd $TRAVIS_BUILD_DIR
   - cat config.log
+  - cat 
   - cat -n ./tests/boost-test-output*
