@@ -26,12 +26,7 @@ if [ ! -d $LOCAL_INSTALL/include ]; then
     cd $LOCAL_INSTALL
     git clone -b maint https://bitbucket.org/petsc/petsc petsc
     cd petsc
-    if [ "$TRAVIS_OS_NAME" = "osx" ]; then 
-      export PETSC_ARCH=arch-darwin-c-debug 
-    else 
-      export PETSC_ARCH=arch-linux2-c-debug
-    fi 
-    python2 configure --with-debugging=1 > ~/petsc.configure
+    python2 configure --with-debugging=1
     make > ~/petsc.make
 fi
 
