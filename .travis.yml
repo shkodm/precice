@@ -35,6 +35,14 @@ env:
     - MPI=on PETSC=off
     - MPI=off PETSC=off
 
+matrix:
+  include:
+      script: bash tools/travis-pr-check.sh
+      after_success:
+      after_failure:
+
+
+
 cache:
   directories:
     - $LOCAL_INSTALL
