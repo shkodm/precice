@@ -111,7 +111,7 @@ buildpath = join(env["builddir"], "") # Ensures to have a trailing slash
 print
 
 env.Append(LIBPATH = [('#' + buildpath)])
-env.Append(CCFLAGS= ['-Wall', '-Wextra', '-Wno-unused-parameter', '-std=c++11'])
+env.Append(CCFLAGS= ['-Wall', '-Wextra', '-Wno-unused-parameter', '-Wno-literal-suffix', '-std=c++11'])
 
 # ====== PRECICE_VERSION number ======
 PRECICE_VERSION = "1.3.0"
