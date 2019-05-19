@@ -2,6 +2,7 @@
 
 # Checks pull request to match certain style and post in the 
 # pull request thread if this style is not matched
+set -x
 
 # Checks code style with clang-tidy
 check_code_style() 
@@ -65,7 +66,6 @@ check_changelog()
     fi
   fi
 }
-
 
 # Get list of files that were changed
 files_changed=$( git log | sed -n '2p' | awk '{print $2, $3}' | xargs git diff --name-only | grep '.cpp\|.hpp' | xargs )
