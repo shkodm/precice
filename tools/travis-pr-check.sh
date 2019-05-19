@@ -25,8 +25,7 @@ check_code_style()
   if [ -n "$not_tidy" ]; then
     bot_msg+="\n* Clang-tidy complained on the following files: "
     bot_msg+="${not_tidy}"
-    bot_msg+="\n Consider running clang-tidy on them ( or browsing
-     [Travis log](https://api.travis-ci.org/v3/job/${TRAVIS_JOB_ID}/log.txt ) ) and fixing reported issues"
+    bot_msg+="\n Consider running clang-tidy on them ( or browsing [Travis log](https://api.travis-ci.org/v3/job/${TRAVIS_JOB_ID}/log.txt ) ) and fixing reported issues"
   fi
 }
 
@@ -80,6 +79,7 @@ check_code_style
 
 # Send message to github API to post in the PR thread if we failed
 if [[ "$pr_invalid" -eq 1 ]]; then
-   curl -s -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$bot_msg\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+   curl -s -H "Authorization: token $TRAVIS_ACCESS_TOKEN" -X POST -d "{\"body\": \"$bot_msg\"}" \
+     "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments" > /dev/null
    exit 1
 fi
